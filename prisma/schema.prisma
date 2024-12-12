@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// table for all individual products
+model Product {
+  id                     String                 @id @default(uuid())
+  name                   String
+  priceInCents           Int
+  filePath               String
+  imagePath              String
+  description            String
+  isAvailableForPurchase Boolean                @default(true)
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  orders                 Order[]
+  downloadVerifications  DownloadVerification[]
+}
+
+// table for each of our customers
+model User {
+  id        String   @id @default(uuid())
+  // in User we use email because authentication will be based on it only
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+// table for evry order of an individual customer
+model Order {
+  id               String   @id @default(uuid())
+  // pricePaidInCents indica il prezzo d'acquisto del prodotto AL MOMENTO dell'acquisto
+  pricePaidInCents Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  userId           String
+  productId        String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+// table for creating links that allow us to download individual products, links that last for
+// x amount of time, for specific customer (id based)
+model DownloadVerification {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
