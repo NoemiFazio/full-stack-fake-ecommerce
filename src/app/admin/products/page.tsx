@@ -1,14 +1,20 @@
 import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/PageHeader";
 import Link from "next/link";
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminProductsPage() {
   return (
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Products</PageHeader>
-        {/* //  asChild fa si che il bottone sia renderizzato come link */}
+        {/* //  asChild makes it so that it is rendered as a link */}
         <Button asChild>
           <Link href="/admin/products/new">Add Product</Link>
         </Button>
@@ -35,6 +41,7 @@ function ProductsTable() {
           </TableHead>
         </TableRow>
       </TableHeader>
+      <TableBody></TableBody>
     </Table>
   );
 }
