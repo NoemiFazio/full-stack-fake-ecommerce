@@ -14,6 +14,8 @@ import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
 import {
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -93,6 +95,18 @@ async function ProductsTable() {
                   <MoreVertical />
                   <span className="sr-only">Actions</span>
                 </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <a download href={`/admin/products/${product.id}/download`}>
+                      Download
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/admin/products/${product.id}/edit`}>
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
           </TableRow>
