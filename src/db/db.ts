@@ -1,4 +1,4 @@
-// This code makes sure that Prisma works well with next.js
+//* This code makes sure that Prisma works well with next.js
 import { PrismaClient } from "@prisma/client";
 
 const prismaClientSingleton = () => {

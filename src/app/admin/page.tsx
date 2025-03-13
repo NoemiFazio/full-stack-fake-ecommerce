@@ -29,11 +29,11 @@ async function getUserData() {
       },
     }),
   ]);
-  // A less functional way to write the same code above
-  // const userCount =await db.user.count()
-  // const orderData = await db.order.aggregate({
-  //     _sum: {pricePaidInCents: true}
-  // })+
+  //* A less functional way to write the same code above
+  //* const userCount =await db.user.count()
+  //* const orderData = await db.order.aggregate({
+  //*     _sum: {pricePaidInCents: true}
+  //* })+
   return {
     userCount,
     averageValuePerUser:
@@ -60,8 +60,8 @@ export default async function AdminDashboard() {
     getUserData(),
     getProductData(),
   ]);
-  //   const salesData = await getSalesData();
-  //   const userData = await getUserData()
+  //*   const salesData = await getSalesData();
+  //*   const userData = await getUserData()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <DashboardCard

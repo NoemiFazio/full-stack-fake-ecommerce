@@ -32,14 +32,13 @@ export async function addProduct(prevState: unknown, formData: FormData) {
 
   const data = result.data;
 
-  // Dobbiamo prima salvare il nostro file/immagine al nostro file system prima di salvare il loro path
-  //  in db.product.create
+  //* Dobbiamo prima salvare il nostro file/immagine al nostro file system prima di salvare il loro path  in db.product.create
 
-  // crea la directory "products" dove sono storati i files, recursive true permette di creare più file
+  //* crea la directory "products" dove sono storati i files, recursive true permette di creare più file
   await fs.mkdir("products", { recursive: true });
-  // così si crea un path unico per ogni file
+  //* così si crea un path unico per ogni file
   const filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
-  // aggiungiamo il file al path di sopra: essenzialmente prendiamo il nostro file in qualsiasi formato sia convertendolo in un formato adatto per writeFile
+  //* aggiungiamo il file al path di sopra: essenzialmente prendiamo il nostro file in qualsiasi formato sia convertendolo in un formato adatto per writeFile
   await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
 
   await fs.mkdir("public/products", { recursive: true });
@@ -60,7 +59,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     },
   });
 
-  // This double revalidatePath, added in every function of this file, is important so that the pages are always cached (so loaded very quicly), but if we run into an instance where add/delete/ecc a product, the pages are relavidated
+  //* This double revalidatePath, added in every function of this file, is important so that the pages are always cached (so loaded very quicly), but if we run into an instance where add/delete/ecc a product, the pages are relavidated
   revalidatePath("/");
   revalidatePath("/products");
 
@@ -84,15 +83,14 @@ export async function updateProduct(
   if (product == null) return notFound();
 
   let filePath = product.filePath;
-  // fa l'update del file solo se esso, effettivamente, cambia
+  //* fa l'update del file solo se esso, effettivamente, cambia
   if (data.file != null && data.file.size > 0) {
     await fs.unlink(product.filePath);
     filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
     await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
   }
 
-  //qui succede che, preso il vecchio path dell'immagine, si passa un path nuovo e si cancella quello
-  //vecchio, e se ne crea uno nuovo
+  //* qui succede che, preso il vecchio path dell'immagine, si passa un path nuovo e si cancella quello vecchio, e se ne crea uno nuovo
 
   let imagePath = product.imagePath;
   if (data.image != null && data.image.size > 0) {

@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//* This is your Prisma schema file, learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -10,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// table for all individual products
+//* table for all individual products
 model Product {
   id                     String                 @id @default(uuid())
   name                   String
@@ -25,20 +24,20 @@ model Product {
   downloadVerifications  DownloadVerification[]
 }
 
-// table for each of our customers
+//* table for each of our customers
 model User {
   id        String   @id @default(uuid())
-  // in User we use email because authentication will be based on it only
+  //* in User we use email because authentication will be based on it only
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
 }
 
-// table for evry order of an individual customer
+//* table for evry order of an individual customer
 model Order {
   id               String   @id @default(uuid())
-  // pricePaidInCents indica il prezzo d'acquisto del prodotto AL MOMENTO dell'acquisto
+  //* pricePaidInCents indica il prezzo d'acquisto del prodotto AL MOMENTO dell'acquisto
   pricePaidInCents Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -48,8 +47,8 @@ model Order {
   product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
-// table for creating links that allow us to download individual products, links that last for
-// x amount of time, for specific customer (id based)
+//* table for creating links that allow us to download individual products, links that last for
+//* x amount of time, for specific customer (id based)
 model DownloadVerification {
   id        String   @id @default(uuid())
   expiresAt DateTime

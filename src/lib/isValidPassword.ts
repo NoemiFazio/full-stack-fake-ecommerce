@@ -5,7 +5,7 @@ export async function isValidPassword(
   return (await hashPassword(password)) === hashedPassword;
 }
 
-// this function encrypts the password
+//* this function encrypts the password
 async function hashPassword(password: string) {
   const arrayBuffer = await crypto.subtle.digest(
     "SHA-512",

@@ -29,7 +29,7 @@ export default function AdminProductsPage() {
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Products</PageHeader>
-        {/* //  asChild makes it so that it is rendered as a link */}
+        {/* //*  asChild makes it so that it is rendered as a link */}
         <Button asChild>
           <Link href="/admin/products/new">Add Product</Link>
         </Button>
@@ -62,7 +62,7 @@ async function ProductsTable() {
       <TableHeader>
         <TableRow>
           <TableHead className="w-0">
-            {/* // the classname sr-only o screenreader only makes it so that the screenreader knows what this section is about   */}
+            {/* //* the classname sr-only o screenreader only makes it so that the screenreader knows what this section is about   */}
             <span className="sr-only">Available For Purchase</span>
           </TableHead>
           <TableHead>Name</TableHead>

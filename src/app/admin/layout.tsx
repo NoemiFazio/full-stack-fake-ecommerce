@@ -1,6 +1,6 @@
 import { Nav, NavLink } from "@/components/Nav/Nav";
 
-// this code doesn't let caching of the admin page data, so that it will always be up to date whenever the page is loaded
+//* this code doesn't let caching of the admin page data, so that it will always be up to date whenever the page is loaded
 export const dynamic = "force-dynamic";
 
 export default function AdminLayout({

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isValidPassword } from "./lib/isValidPassword";
 
-// Runs before every single function and page call
+//* Runs before every single function and page call
 export async function middleware(req: NextRequest) {
   if ((await isAuthenticated(req)) === false) {
     return new NextResponse("Unauthorized", {
@@ -28,7 +28,7 @@ async function isAuthenticated(req: NextRequest) {
   );
 }
 
-// All pages that start with /admin/...
+//* All pages that start with /admin/...
 export const config = {
   matcher: "/admin/:path*",
 };
