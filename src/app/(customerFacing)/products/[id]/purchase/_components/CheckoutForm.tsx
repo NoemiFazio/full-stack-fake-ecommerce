@@ -1,5 +1,6 @@
 "use client";
 
+import { userOrderExists } from "@/app/actions/orders";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +14,7 @@ import { formatCurrency } from "@/lib/formatters";
 //* Elements will behave as a context from stripe
 import {
   Elements,
+  LinkAuthenticationElement,
   PaymentElement,
   useElements,
   useStripe,
@@ -23,6 +25,7 @@ import { FormEvent, useState } from "react";
 
 type CheckoutFormProps = {
   product: {
+    id: string;
     imagePath: string;
     name: string;
     priceInCents: number;
@@ -64,35 +67,61 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
         }}
         stripe={stripePromise}
       >
-        <Form priceInCents={product.priceInCents} />
+        <Form priceInCents={product.priceInCents} productId={product.id} />
       </Elements>
     </div>
   );
 }
 
 //* Here the hook useStripe gives us an instance of stripe variable
-function Form({ priceInCents }: { priceInCents: number }) {
+function Form({
+  priceInCents,
+  productId,
+}: {
+  priceInCents: number;
+  productId: string;
+}) {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [email, setEmail] = useState<string>();
+
   const stripe = useStripe();
   //* this allows us to hook up stripe
   const elements = useElements();
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    if (stripe == null || elements == null) {
+    if (stripe == null || elements == null || email == null) {
       return;
     }
     setIsLoading(true);
 
     //* Check for existing order
+    const orderExists = await userOrderExists(email, productId);
+    if (orderExists) {
+      setErrorMessage(
+        "You have already purchased this product. Try download it from the My Orders page."
+      );
+      setIsLoading(false);
+      return;
+    }
     //* elements: data related to credit card, return_url in confirmParams is the url where the buyer is sent (succes page we create inside customerFacing) after the purchase
-    stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
-      },
-    });
+    stripe
+      .confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
+        },
+      })
+      .then(({ error }) => {
+        if (error.type === "card_error" || error.type === "validation_error") {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage("An unknown error occurred.");
+        }
+      })
+      .finally(() => setIsLoading(false));
   }
 
   return (
@@ -100,10 +129,19 @@ function Form({ priceInCents }: { priceInCents: number }) {
       <Card>
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
-          <CardDescription className="text-destructive">Error</CardDescription>
+          {errorMessage && (
+            <CardDescription className="text-destructive">
+              {errorMessage}
+            </CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <PaymentElement />
+          <div className="mt-4">
+            <LinkAuthenticationElement
+              onChange={(e) => setEmail(e.value.email)}
+            />
+          </div>
         </CardContent>
         <CardFooter>
           <Button
