@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Stripe from "stripe";
 import { CheckoutForm } from "./_components/CheckoutForm";
 
-// this musst occur on the server, not on the client, because we are going to pass a secret key. Here we are "casting" in order to remove ts error
+//* this musst occur on the server, not on the client, because we are going to pass a secret key. Here we are "casting" in order to remove ts error
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 export default async function PurchasePage({
