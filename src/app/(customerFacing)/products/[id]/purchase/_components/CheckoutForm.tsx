@@ -19,6 +19,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
+import { FormEvent, useState } from "react";
 
 type CheckoutFormProps = {
   product: {
@@ -71,12 +72,31 @@ export function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
 
 //* Here the hook useStripe gives us an instance of stripe variable
 function Form({ priceInCents }: { priceInCents: number }) {
+  const [isLoading, setIsLoading] = useState(false);
   const stripe = useStripe();
   //* this allows us to hook up stripe
   const elements = useElements();
 
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (stripe == null || elements == null) {
+      return;
+    }
+    setIsLoading(true);
+
+    //* Check for existing order
+    //* elements: data related to credit card, return_url in confirmParams is the url where the buyer is sent (succes page we create inside customerFacing) after the purchase
+    stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
+      },
+    });
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
@@ -89,9 +109,11 @@ function Form({ priceInCents }: { priceInCents: number }) {
           <Button
             className="w-full"
             size="lg"
-            disabled={stripe == null || elements == null}
+            disabled={stripe == null || elements == null || isLoading}
           >
-            Purchase - {formatCurrency(priceInCents / 100)}
+            {isLoading
+              ? "Purchasing..."
+              : `Purchase - ${formatCurrency(priceInCents / 100)}`}
           </Button>
         </CardFooter>
       </Card>
